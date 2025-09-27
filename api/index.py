@@ -1,3 +1,11 @@
+
+'''
+Developer: RISHABH SAHIL { CODER BHAI 🔥 }
+Description: Aagaaz is my platform to share my love for math and puzzles. 
+             It features Sudoku generators and math quizzes in Mathemania to help sharpen minds. 
+             I designed it for fun and learning at all levels.
+'''
+
 from flask import Flask, render_template, jsonify, request
 import random
 import copy
