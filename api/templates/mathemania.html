@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Mathemania - Aagaz{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center text-gray-100">Mathemania - Brain Teasers</h1>
+    <div class="card mb-6 p-4">
+        <h3 class="text-lg font-medium mb-3">Select Difficulty:</h3>
+        <button class="level-btn btn" data-level="easy">Easy</button>
+        <button class="level-btn btn" data-level="medium">Medium</button>
+        <button class="level-btn btn" data-level="hard">Hard</button>
+    </div>
+    <div id="quiz-container" class="card hidden p-4">
+        <div id="question-display" class="question-card text-xl mb-4"></div>
+        <div id="options-display" class="space-y-3 mb-6"></div>
+        <div class="flex justify-between mb-4">
+            <button id="prev-btn" class="btn disabled:opacity-50">Previous</button>
+            <button id="next-btn" class="btn">Next</button>
+        </div>
+        <div id="score-display" class="text-center text-lg font-bold mb-4"></div>
+        <button id="history-btn" class="btn btn-accent w-full">View History</button>
+    </div>
+    <div id="history-container" class="card hidden mt-6 p-4">
+        <h2 class="text-2xl font-semibold mb-4">Mathemania History</h2>
+        <p id="mathemania-stats"></p>
+        <ul id="mathemania-history-list" class="history-list"></ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let questions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let level = 'easy';
+    let answers = [];
+    let mathemaniaHistory = JSON.parse(localStorage.getItem('mathemaniaHistory')) || { quizzes: 0, scores: { easy: [], medium: [], hard: [] }, questions: [] };
+
+    function saveMathemaniaHistory() {
+        mathemaniaHistory.quizzes++;
+        mathemaniaHistory.scores[level].push(score);
+        questions.forEach((q, idx) => {
+            mathemaniaHistory.questions.push({
+                question: q.question,
+                solved: answers[idx] === q.correct,
+                level,
+                date: new Date().toLocaleString()
+            });
+        });
+        localStorage.setItem('mathemaniaHistory', JSON.stringify(mathemaniaHistory));
+    }
+
+    function displayMathemaniaHistory() {
+        const container = document.getElementById('history-container');
+        container.classList.toggle('hidden');
+        if (!container.classList.contains('hidden')) {
+            const stats = document.getElementById('mathemania-stats');
+            stats.innerHTML = `Total Quizzes: ${mathemaniaHistory.quizzes}<br>`;
+            ['easy', 'medium', 'hard'].forEach(l => {
+                const scores = mathemaniaHistory.scores[l];
+                const avg = scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : 0;
+                stats.innerHTML += `${l.charAt(0).toUpperCase() + l.slice(1)} Avg Score: ${avg}/10<br>`;
+            });
+            const list = document.getElementById('mathemania-history-list');
+            list.innerHTML = '';
+            mathemaniaHistory.questions.forEach(q => {
+                const li = document.createElement('li');
+                li.textContent = `${q.question} - ${q.solved ? 'Solved' : 'Unsolved'} (${q.level}) - ${q.date}`;
+                li.classList.add(q.solved ? 'text-green-500' : 'text-red-500');
+                list.appendChild(li);
+            });
+        }
+    }
+
+    async function startQuiz() {
+        const response = await fetch(`/generate_questions?level=${level}&num=10`);
+        const data = await response.json();
+        questions = data.questions;
+        currentIndex = 0;
+        score = 0;
+        answers = Array(10).fill(null);
+        displayQuestion();
+        document.getElementById('quiz-container').classList.remove('hidden');
+    }
+
+    document.querySelectorAll('.level-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            level = btn.dataset.level;
+            startQuiz();
+        });
+    });
+
+    function displayQuestion() {
+        const q = questions[currentIndex];
+        document.getElementById('question-display').innerHTML = `<h3 class="font-bold text-xl">Q${currentIndex + 1}: ${q.question}</h3>`;
+        const optionsDiv = document.getElementById('options-display');
+        optionsDiv.innerHTML = '';
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = `option-btn btn w-full text-left ${answers[currentIndex] === idx ? (idx === q.correct ? 'bg-green-500' : 'bg-red-500') : ''}`;
+            btn.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
+            btn.disabled = answers[currentIndex] !== null;
+            btn.addEventListener('click', () => selectOption(idx));
+            optionsDiv.appendChild(btn);
+        });
+        updateButtons();
+        updateScore();
+    }
+
+    function selectOption(selectedIdx) {
+        const correctIdx = questions[currentIndex].correct;
+        answers[currentIndex] = selectedIdx;
+        if (selectedIdx === correctIdx) score++;
+        displayQuestion();
+    }
+
+    function updateButtons() {
+        document.getElementById('prev-btn').disabled = currentIndex === 0;
+        document.getElementById('next-btn').textContent = currentIndex === questions.length - 1 ? 'Finish' : 'Next';
+        document.getElementById('next-btn').onclick = () => {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                displayQuestion();
+            } else {
+                saveMathemaniaHistory();
+                alert(`Quiz Complete! Score: ${score}/10`);
+                location.reload();
+            }
+        };
+        document.getElementById('prev-btn').onclick = () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                displayQuestion();
+            }
+        };
+    }
+
+    function updateScore() {
+        document.getElementById('score-display').innerHTML = `Current Score: ${score}/${currentIndex + 1}<br>High Score (${level}): ${localStorage.getItem(`highScore_${level}`) || 0}/10`;
+    }
+
+    function loadHighScore() {
+        const high = localStorage.getItem(`highScore_${level}`) || 0;
+        if (score > high) localStorage.setItem(`highScore_${level}`, score);
+    }
+
+    document.getElementById('history-btn').addEventListener('click', displayMathemaniaHistory);
+</script>
+{% endblock %}

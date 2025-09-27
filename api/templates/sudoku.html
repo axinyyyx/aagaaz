@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Sudoku - Aagaz{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center text-gray-100">Sudoku Solver & Checker</h1>
+    <div class="grid md:grid-cols-2 gap-8">
+        <div class="card p-6">
+            <h3 class="text-xl font-semibold mb-4">Puzzle Controls</h3>
+            <div class="space-y-2 mb-4">
+                <button class="level-btn btn" data-level="easy">Easy Puzzle</button>
+                <button class="level-btn btn" data-level="medium">Medium Puzzle</button>
+                <button class="level-btn btn" data-level="hard">Hard Puzzle</button>
+            </div>
+            <div class="space-y-2">
+                <button id="clear-btn" class="btn bg-gray-600 hover:bg-gray-700">Clear Grid</button>
+                <button id="solve-btn" class="btn btn-success">Solve Puzzle</button>
+                <button id="check-btn" class="btn btn-accent">Check Answers</button>
+            </div>
+        </div>
+        <div class="card p-6">
+            <h3 class="text-xl font-semibold mb-4">Instructions</h3>
+            <ul class="list-disc pl-6 space-y-1 text-sm">
+                <li>Click level buttons to load a new puzzle</li>
+                <li>Fill in numbers (1-9) in the grid</li>
+                <li>Use "Solve" to auto-complete the puzzle</li>
+                <li>Use "Check" to validate your solution</li>
+                <li>Green cells = Correct, Red = Errors</li>
+            </ul>
+        </div>
+    </div>
+    <div id="sudoku-grid" class="sudoku-grid my-8 mx-auto"></div>
+    <div id="status" class="text-center text-lg font-bold mb-4 hidden"></div>
+    <button id="history-btn" class="btn btn-accent mx-auto block">View History</button>
+    <div id="history-container" class="card hidden mt-6">
+        <h2 class="text-2xl font-semibold mb-4">Sudoku History</h2>
+        <p id="sudoku-stats"></p>
+        <ul id="sudoku-history-list" class="history-list"></ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let currentLevel = 'medium';
+    let sudokuHistory = JSON.parse(localStorage.getItem('sudokuHistory')) || { solved: 0, levels: { easy: 0, medium: 0, hard: 0 }, puzzles: [] };
+    let solution = null;
+
+    function saveSudokuHistory(level, action) {
+        sudokuHistory.solved++;
+        sudokuHistory.levels[level]++;
+        sudokuHistory.puzzles.push({ level, action, date: new Date().toLocaleString() });
+        localStorage.setItem('sudokuHistory', JSON.stringify(sudokuHistory));
+    }
+
+    function displaySudokuHistory() {
+        const container = document.getElementById('history-container');
+        container.classList.toggle('hidden');
+        if (!container.classList.contains('hidden')) {
+            document.getElementById('sudoku-stats').innerHTML = `Total Actions: ${sudokuHistory.solved}<br>Easy: ${sudokuHistory.levels.easy} | Medium: ${sudokuHistory.levels.medium} | Hard: ${sudokuHistory.levels.hard}`;
+            const list = document.getElementById('sudoku-history-list');
+            list.innerHTML = '';
+            sudokuHistory.puzzles.slice(-10).reverse().forEach(p => {  // Last 10
+                const li = document.createElement('li');
+                li.textContent = `${p.action} - Level: ${p.level} - ${p.date}`;
+                list.appendChild(li);
+            });
+        }
+    }
+
+    function createGrid(puzzle = null, sol = null) {
+        const grid = document.getElementById('sudoku-grid');
+        grid.innerHTML = '';
+        solution = sol;
+        const board = puzzle || Array(9).fill().map(() => Array(9).fill(0));
+        for (let i = 0; i < 9; i++) {
+            for (let j = 0; j < 9; j++) {
+                const cell = document.createElement('div');
+                cell.className = 'sudoku-cell';
+                if (j % 3 === 2 && j < 8) cell.classList.add('border-right');
+                if (i % 3 === 2 && i < 8) cell.classList.add('border-bottom');
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.maxLength = 1;
+                input.value = board[i][j] || '';
+                input.dataset.row = i;
+                input.dataset.col = j;
+                input.addEventListener('keydown', (e) => {
+                    if (e.key.length === 1 && (e.key < '1' || e.key > '9')) e.preventDefault();
+                    if (e.key === 'Enter') document.querySelector('#solve-btn').click();
+                });
+                input.addEventListener('input', (e) => {
+                    if (e.target.value && !['1','2','3','4','5','6','7','8','9'].includes(e.target.value)) {
+                        e.target.value = '';
+                    }
+                });
+                cell.appendChild(input);
+                grid.appendChild(cell);
+            }
+        }
+        if (puzzle) highlightClues(puzzle);
+    }
+
+    function highlightClues(puzzle) {
+        document.querySelectorAll('.sudoku-cell input').forEach(input => {
+            const row = parseInt(input.dataset.row);
+            const col = parseInt(input.dataset.col);
+            if (puzzle[row][col] !== 0) {
+                input.disabled = true;
+                input.classList.add('bg-gray-600');
+            } else {
+                input.disabled = false;
+                input.classList.remove('bg-gray-600');
+            }
+        });
+    }
+
+    function getCurrentBoard() {
+        const inputs = document.querySelectorAll('.sudoku-cell input');
+        const board = Array(9).fill().map(() => Array(9).fill(0));
+        inputs.forEach(input => {
+            const row = parseInt(input.dataset.row);
+            const col = parseInt(input.dataset.col);
+            board[row][col] = input.value ? parseInt(input.value) : 0;
+        });
+        return board;
+    }
+
+    async function loadPuzzle(level) {
+        const response = await fetch(`/generate_sudoku?level=${level}`);
+        const data = await response.json();
+        createGrid(data.puzzle, data.solution);
+        document.getElementById('status').classList.add('hidden');
+        saveSudokuHistory(level, 'Generated');
+    }
+
+    async function solvePuzzle() {
+        const board = getCurrentBoard();
+        const response = await fetch('/solve', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({board})
+        });
+        const data = await response.json();
+        if (data.solved) {
+            fillGrid(data.board);
+            document.getElementById('status').textContent = 'Puzzle Solved!';
+            document.getElementById('status').classList.remove('hidden', 'text-red-500');
+            document.getElementById('status').classList.add('text-green-500');
+            saveSudokuHistory(currentLevel, 'Solved');
+        } else {
+            document.getElementById('status').textContent = 'No solution found. Check input.';
+            document.getElementById('status').classList.remove('hidden', 'text-green-500');
+            document.getElementById('status').classList.add('text-red-500');
+        }
+    }
+
+    async function checkPuzzle() {
+        const board = getCurrentBoard();
+        const response = await fetch('/validate', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({board})
+        });
+        const data = await response.json();
+        highlightValidation(data.valid, board);
+        if (data.valid) {
+            document.getElementById('status').textContent = 'Valid Solution!';
+            document.getElementById('status').classList.remove('hidden', 'text-red-500');
+            document.getElementById('status').classList.add('text-green-500');
+            saveSudokuHistory(currentLevel, 'Validated');
+        } else {
+            document.getElementById('status').textContent = 'Invalid - Check highlighted errors.';
+            document.getElementById('status').classList.remove('hidden', 'text-green-500');
+            document.getElementById('status').classList.add('text-red-500');
+        }
+    }
+
+    function fillGrid(board) {
+        document.querySelectorAll('.sudoku-cell input').forEach(input => {
+            const row = parseInt(input.dataset.row);
+            const col = parseInt(input.dataset.col);
+            input.value = board[row][col];
+        });
+    }
+
+    function highlightValidation(valid, board) {
+        document.querySelectorAll('.sudoku-cell input').forEach(input => {
+            const row = parseInt(input.dataset.row);
+            const col = parseInt(input.dataset.col);
+            input.classList.remove('bg-green-500', 'bg-red-500');
+            if (board[row][col] !== 0) {
+                input.classList.add('bg-green-500');
+            }
+        });
+        // Simple error highlight (rows/cols with dups would need more logic, but for now assume valid highlights green)
+        if (!valid) {
+            // Highlight potential errors - simplistic
+            for (let i = 0; i < 9; i++) {
+                // Get all non-zero values in the row
+                const row = board[i].filter(val => val !== 0);
+                if (new Set(row).size !== row.length) {
+                    for (let j = 0; j < 9; j++) {
+                        if (board[i][j]) document.querySelector(`[data-row="${i}"][data-col="${j}"]`).classList.add('bg-red-500');
+                    }
+                }
+            }
+        }
+    }
+
+    function clearGrid() {
+        createGrid();
+        document.getElementById('status').classList.add('hidden');
+        saveSudokuHistory('custom', 'Cleared');
+    }
+
+    document.querySelectorAll('.level-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentLevel = btn.dataset.level;
+            loadPuzzle(currentLevel);
+        });
+    });
+
+    document.getElementById('generate-btn')?.addEventListener('click', () => loadPuzzle(currentLevel));
+    document.getElementById('solve-btn').addEventListener('click', solvePuzzle);
+    document.getElementById('check-btn').addEventListener('click', checkPuzzle);
+    document.getElementById('clear-btn').addEventListener('click', clearGrid);
+    document.getElementById('history-btn').addEventListener('click', displaySudokuHistory);
+
+    // Initial load
+    loadPuzzle(currentLevel);
+</script>
+{% endblock %}

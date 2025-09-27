@@ -1,0 +1,166 @@
+:root {
+    --bg-color: #0f172a;
+    --text-color: #f9fafb;
+    --card-bg: #1e293b;
+    --border-color: #475569;
+    --primary-color: #60a5fa;
+    --success-color: #34d399;
+    --error-color: #f87171;
+    --accent-color: #818cf8;
+    --navbar-bg: #1f2937;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar {
+    background-color: var(--navbar-bg);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    font-weight: 600;
+}
+
+.btn:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+}
+
+.btn-success:hover {
+    background-color: #059669;
+}
+
+.btn-accent {
+    background-color: var(--accent-color);
+}
+
+.btn-accent:hover {
+    background-color: #4f46e5;
+}
+
+.level-btn {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.sudoku-grid {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(2.5rem, 3rem));
+    gap: 2px;
+    background-color: #334155;
+    padding: 2px;
+    width: fit-content;
+    margin: 0 auto;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.sudoku-cell {
+    width: 100%;
+    height: 3rem;
+    background-color: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    transition: background-color 0.2s;
+}
+
+.sudoku-cell input {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.sudoku-cell input:disabled {
+    background-color: #475569;
+    color: #d1d5db;
+}
+
+.border-right {
+    border-right: 3px solid #94a3b8 !important;
+}
+
+.border-bottom {
+    border-bottom: 3px solid #94a3b8 !important;
+}
+
+.question-card {
+    margin-bottom: 1.5rem;
+}
+
+.option-btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.75rem;
+    text-align: left;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.option-btn:hover {
+    background-color: var(--border-color);
+}
+
+.history-list {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+}
+
+.dev-image {
+    border-radius: 50%;
+    width: 180px;
+    height: 180px;
+    border: 4px solid var(--primary-color);
+    margin: 0 auto;
+    display: block;
+}
+
+@media (max-width: 640px) {
+    .sudoku-grid {
+        grid-template-columns: repeat(9, 2rem);
+    }
+    .sudoku-cell {
+        height: 2rem;
+        font-size: 1rem;
+    }
+    .sudoku-cell input {
+        font-size: 1rem;
+    }
+}

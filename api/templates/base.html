@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Aagaaz{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="min-h-screen flex flex-col">
+    <nav class="navbar fixed top-0 w-full z-50 flex justify-between items-center p-4">
+        <div class="flex space-x-6 items-center">
+            <a href="/" class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-500">Aagaaz</a>
+            <a href="/" class="{% if request.endpoint == 'sudoku' or request.endpoint == 'index' %}text-blue-500 border-b-2 border-blue-500{% else %}text-gray-300 hover:text-blue-500{% endif %} px-3 py-2 rounded transition">Sudoku</a>
+            <a href="/mathemania" class="{% if request.endpoint == 'mathemania' %}text-blue-500 border-b-2 border-blue-500{% else %}text-gray-300 hover:text-blue-500{% endif %} px-3 py-2 rounded transition">Mathemania</a>
+            <a href="/about" class="{% if request.endpoint == 'about' %}text-blue-500 border-b-2 border-blue-500{% else %}text-gray-300 hover:text-blue-500{% endif %} px-3 py-2 rounded transition">About</a>
+        </div>
+    </nav>
+    <main class="flex-grow pt-20 p-6">
+        {% block content %}{% endblock %}
+    </main>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
