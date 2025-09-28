@@ -4,25 +4,30 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto">
-    <h1 class="text-4xl font-bold mb-8 text-center text-gray-100">Sudoku Solver & Checker</h1>
-    <div class="grid md:grid-cols-2 gap-8">
-        <div class="card p-6">
+    <h1 class="text-4xl font-bold mb-8 text-center">Sudoku Solver & Checker</h1>
+    <div class="grid md:grid-cols-2 gap-4 md:gap-8">
+        <div class="card p-4 md:p-6">
             <h3 class="text-xl font-semibold mb-4">Puzzle Controls</h3>
-            <div class="space-y-2 mb-4">
-                <button class="level-btn btn" data-level="easy">Easy Puzzle</button>
-                <button class="level-btn btn" data-level="medium">Medium Puzzle</button>
-                <button class="level-btn btn" data-level="hard">Hard Puzzle</button>
-            <!-- </div>
-            <div class="space-y-2"> -->
+            <div class="relative mb-4">
+                <button id="level-dropdown-btn" class="btn w-full flex justify-between items-center">
+                    <span id="selected-level">Medium</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div id="level-dropdown" class="hidden absolute w-full bg-gray-700 rounded-md shadow-lg z-10">
+                    <button class="level-btn w-full text-left px-4 py-2 hover:bg-gray-600" data-level="easy">Easy</button>
+                    <button class="level-btn w-full text-left px-4 py-2 hover:bg-gray-600" data-level="medium">Medium</button>
+                    <button class="level-btn w-full text-left px-4 py-2 hover:bg-gray-600" data-level="hard">Hard</button>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
                 <button id="clear-btn" class="btn bg-gray-600 hover:bg-gray-700">Clear Grid</button>
                 <button id="solve-btn" class="btn btn-success">Solve Puzzle</button>
-                <button id="check-btn" class="btn btn-accent">Check Answers</button>
             </div>
         </div>
-        <div class="card p-6">
+        <div class="card p-4 md:p-6">
             <h3 class="text-xl font-semibold mb-4">Instructions</h3>
             <ul class="list-disc pl-6 space-y-1 text-sm">
-                <li>Click level buttons to load a new puzzle</li>
+                <li>Select a level to load a new puzzle</li>
                 <li>Fill in numbers (1-9) in the grid</li>
                 <li>Use "Solve" to auto-complete the puzzle</li>
                 <li>Use "Check" to validate your solution</li>
@@ -32,8 +37,11 @@
     </div>
     <div id="sudoku-grid" class="sudoku-grid my-8 mx-auto"></div>
     <div id="status" class="text-center text-lg font-bold mb-4 hidden"></div>
-    <button id="history-btn" class="btn btn-accent mx-auto block">View History</button>
-    <div id="history-container" class="card hidden mt-6">
+    <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4">
+        <button id="check-btn" class="btn btn-accent">Check Answers</button>
+        <button id="history-btn" class="btn btn-accent">View History</button>
+    </div>
+    <div id="history-container" class="card hidden mt-6 p-4 md:p-6">
         <h2 class="text-2xl font-semibold mb-4">Sudoku History</h2>
         <p id="sudoku-stats"></p>
         <ul id="sudoku-history-list" class="history-list"></ul>
@@ -61,7 +69,7 @@
             document.getElementById('sudoku-stats').innerHTML = `Total Actions: ${sudokuHistory.solved}<br>Easy: ${sudokuHistory.levels.easy} | Medium: ${sudokuHistory.levels.medium} | Hard: ${sudokuHistory.levels.hard}`;
             const list = document.getElementById('sudoku-history-list');
             list.innerHTML = '';
-            sudokuHistory.puzzles.slice(-10).reverse().forEach(p => {  // Last 10
+            sudokuHistory.puzzles.slice(-10).reverse().forEach(p => {
                 const li = document.createElement('li');
                 li.textContent = `${p.action} - Level: ${p.level} - ${p.date}`;
                 list.appendChild(li);
@@ -132,6 +140,7 @@
         const data = await response.json();
         createGrid(data.puzzle, data.solution);
         document.getElementById('status').classList.add('hidden');
+        document.getElementById('selected-level').textContent = level.charAt(0).toUpperCase() + level.slice(1);
         saveSudokuHistory(level, 'Generated');
     }
 
@@ -194,11 +203,8 @@
                 input.classList.add('bg-green-500');
             }
         });
-        // Simple error highlight (rows/cols with dups would need more logic, but for now assume valid highlights green)
         if (!valid) {
-            // Highlight potential errors - simplistic
             for (let i = 0; i < 9; i++) {
-                // Get all non-zero values in the row
                 const row = board[i].filter(val => val !== 0);
                 if (new Set(row).size !== row.length) {
                     for (let j = 0; j < 9; j++) {
@@ -219,10 +225,14 @@
         btn.addEventListener('click', () => {
             currentLevel = btn.dataset.level;
             loadPuzzle(currentLevel);
+            document.getElementById('level-dropdown').classList.add('hidden');
         });
     });
 
-    document.getElementById('generate-btn')?.addEventListener('click', () => loadPuzzle(currentLevel));
+    document.getElementById('level-dropdown-btn').addEventListener('click', () => {
+        document.getElementById('level-dropdown').classList.toggle('hidden');
+    });
+
     document.getElementById('solve-btn').addEventListener('click', solvePuzzle);
     document.getElementById('check-btn').addEventListener('click', checkPuzzle);
     document.getElementById('clear-btn').addEventListener('click', clearGrid);

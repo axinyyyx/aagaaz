@@ -4,12 +4,20 @@
 
 {% block content %}
 <div class="max-w-3xl mx-auto">
-    <h1 class="text-4xl font-bold mb-8 text-center text-gray-100">Mathemania - Brain Teasers</h1>
+    <h1 class="text-4xl font-bold mb-8 text-center">Mathemania - Brain Teasers</h1>
     <div class="card mb-6 p-4">
         <h3 class="text-lg font-medium mb-3">Select Difficulty:</h3>
-        <button class="level-btn btn" data-level="easy">Easy</button>
-        <button class="level-btn btn" data-level="medium">Medium</button>
-        <button class="level-btn btn" data-level="hard">Hard</button>
+        <div class="relative">
+            <button id="level-dropdown-btn" class="btn w-full flex justify-between items-center">
+                <span id="selected-level">Easy</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div id="level-dropdown" class="hidden absolute w-full bg-gray-700 rounded-md shadow-lg z-10">
+                <button class="level-btn w-full text-left px-4 py-2 hover:bg-gray-600" data-level="easy">Easy</button>
+                <button class="level-btn w-full text-left px-4 py-2 hover:bg-gray-600" data-level="medium">Medium</button>
+                <button class="level-btn w-full text-left px-4 py-2 hover:bg-gray-600" data-level="hard">Hard</button>
+            </div>
+        </div>
     </div>
     <div id="quiz-container" class="card hidden p-4">
         <div id="question-display" class="question-card text-xl mb-4"></div>
@@ -83,13 +91,19 @@
         answers = Array(10).fill(null);
         displayQuestion();
         document.getElementById('quiz-container').classList.remove('hidden');
+        document.getElementById('selected-level').textContent = level.charAt(0).toUpperCase() + level.slice(1);
     }
 
     document.querySelectorAll('.level-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             level = btn.dataset.level;
             startQuiz();
+            document.getElementById('level-dropdown').classList.add('hidden');
         });
+    });
+
+    document.getElementById('level-dropdown-btn').addEventListener('click', () => {
+        document.getElementById('level-dropdown').classList.toggle('hidden');
     });
 
     function displayQuestion() {
@@ -139,11 +153,6 @@
 
     function updateScore() {
         document.getElementById('score-display').innerHTML = `Current Score: ${score}/${currentIndex + 1}<br>High Score (${level}): ${localStorage.getItem(`highScore_${level}`) || 0}/10`;
-    }
-
-    function loadHighScore() {
-        const high = localStorage.getItem(`highScore_${level}`) || 0;
-        if (score > high) localStorage.setItem(`highScore_${level}`, score);
     }
 
     document.getElementById('history-btn').addEventListener('click', displayMathemaniaHistory);

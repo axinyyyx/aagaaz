@@ -3,31 +3,74 @@
 {% block title %}About - Aagaaz{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-    <div class="card">
-        <h2 class="text-3xl font-semibold mb-6 text-center">About the Site</h2>
-        <p class="mb-4 text-lg leading-relaxed">Aagaaz is my platform to share my love for math and puzzles. It features Sudoku generators and math quizzes in Mathemania to help sharpen minds. I designed it for fun and learning at all levels.</p>
-        <p class="mb-4 text-lg">Key Features:</p>
-        <ul class="list-disc pl-6 space-y-2 text-lg">
-            <li>Custom Sudoku puzzles with varying difficulties</li>
-            <li>Interactive math and reasoning quizzes</li>
-            <li>History tracking to monitor progress</li>
-            <li>Sleek dark mode interface</li>
-            <li>Powered by Flask and Python for reliability</li>
+<div class="max-w-5xl mx-auto space-y-8">
+    <!-- About the Site -->
+    <div class="card p-6">
+        <h2 class="text-3xl font-semibold mb-6 text-center">About Aagaaz</h2>
+        <p class="mb-4 text-lg leading-relaxed text-center">Aagaaz is a platform born out of my passion for math and puzzles, designed to challenge and sharpen minds. Whether you're solving intricate Sudoku puzzles or tackling brain-teasing math quizzes in Mathemania, Aagaaz offers fun and learning for all skill levels.</p>
+        <p class="mb-4 text-lg font-semibold text-center">Key Features:</p>
+        <ul class="list-disc pl-6 mx-auto max-w-2xl space-y-2 text-lg">
+            <li>Customizable Sudoku puzzles with Easy, Medium, and Hard difficulties</li>
+            <li>Interactive math and reasoning quizzes in Mathemania</li>
+            <li>Progress tracking with history for both games</li>
+            <li>Sleek, responsive dark mode interface</li>
+            <li>Built with Flask and Python for a seamless experience</li>
         </ul>
     </div>
-    <div class="card">
-        <h2 class="text-3xl font-semibold mb-6 text-center">About Me</h2>
-        <img src="https://avatars.githubusercontent.com/u/164033987?v=4" alt="Rishabh Kumar" class="dev-image mb-6">
-        <h3 class="text-2xl font-bold mb-3 text-center">Rishabh Kumar</h3>
-        <p class="text-center mb-6 text-lg leading-relaxed">Technology is my life.</p>
-        <div class="flex justify-center space-x-6">
-            <a href="https://www.instagram.com/rishabhsahill" target="_blank" class="text-blue-600 hover:text-blue-800 text-2xl"><i class="fab fa-instagram"></i> Instagram</a>
-            <a href="https://www.facebook.com/rishabhsahill" target="_blank" class="text-blue-600 hover:text-blue-800 text-2xl"><i class="fab fa-facebook"></i> Facebook</a>
-            <a href="https://x.com/rishabhsahill" target="_blank" class="text-blue-600 hover:text-blue-800 text-2xl"><i class="fab fa-twitter"></i> X</a>
-            <a href="https://github.com/axinyyyx" target="_blank" class="text-blue-600 hover:text-blue-800 text-2xl"><i class="fab fa-github"></i> GitHub</a>
+
+    <!-- Game Details -->
+    <div class="card p-6">
+        <h2 class="text-3xl font-semibold mb-6 text-center">Game Details</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <h3 class="text-2xl font-bold">Sudoku</h3>
+                <p class="text-lg">Test your logic with our Sudoku solver and checker. Choose from three difficulty levels, fill in the 9x9 grid, and use the solve or check features to perfect your puzzle.</p>
+                <p class="text-lg font-semibold">How to Play:</p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>Select a difficulty (Easy, Medium, Hard) to generate a puzzle</li>
+                    <li>Enter numbers (1-9) in the grid</li>
+                    <li>Use "Solve" to auto-complete or "Check" to validate your solution</li>
+                    <li>Track your progress with the history feature</li>
+                </ul>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-2xl font-bold">Mathemania</h3>
+                <p class="text-lg">Challenge your brain with math and reasoning quizzes. From arithmetic to logic puzzles, Mathemania offers 10-question sets across three difficulty levels.</p>
+                <p class="text-lg font-semibold">How to Play:</p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>Choose a difficulty to start a 10-question quiz</li>
+                    <li>Select the correct answer from four options</li>
+                    <li>Navigate with Previous/Next buttons</li>
+                    <li>View your score and history after completing the quiz</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Developer -->
+    <div class="card p-6">
+        <h2 class="text-3xl font-semibold mb-6 text-center">About the Developer</h2>
+        <div class="flex flex-col items-center space-y-4">
+            <img src="https://avatars.githubusercontent.com/u/164033987?v=4" alt="Rishabh Kumar" class="dev-image">
+            <h3 class="text-2xl font-bold">Rishabh Kumar</h3>
+            <p class="text-lg text-center max-w-lg">👀 I’m interested in Python & Chess ♟️</p>
+            <p class="text-lg text-center max-w-lg">🌱 I’m currently learning Kotlin</p>
+            <p class="text-lg text-center max-w-lg">😄 I use Linuxxx btw</p>
+            <div class="flex justify-center space-x-4">
+                <a href="https://www.instagram.com/rishabhsahill" target="_blank" class="social-btn">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.facebook.com/rishabhsahill" target="_blank" class="social-btn">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="https://x.com/rishabhsahill" target="_blank" class="social-btn">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://github.com/axinyyyx" target="_blank" class="social-btn">
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
         </div>
     </div>
 </div>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 {% endblock %}
