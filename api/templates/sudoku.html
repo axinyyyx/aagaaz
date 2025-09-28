@@ -175,12 +175,12 @@
         const data = await response.json();
         highlightValidation(data.valid, board);
         if (data.valid) {
-            document.getElementById('status').textContent = 'Valid Solution!';
+            document.getElementById('status').textContent = 'Right Solution!';
             document.getElementById('status').classList.remove('hidden', 'text-red-500');
             document.getElementById('status').classList.add('text-green-500');
             saveSudokuHistory(currentLevel, 'Validated');
         } else {
-            document.getElementById('status').textContent = 'Invalid - Check highlighted errors.';
+            document.getElementById('status').textContent = 'Wrong - Check highlighted errors.';
             document.getElementById('status').classList.remove('hidden', 'text-green-500');
             document.getElementById('status').classList.add('text-red-500');
         }
