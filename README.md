@@ -1,28 +1,95 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fpython%2Fflask3&demo-title=Flask%203%20%2B%20Vercel&demo-description=Use%20Flask%203%20on%20Vercel%20with%20Serverless%20Functions%20using%20the%20Python%20Runtime.&demo-url=https%3A%2F%2Fflask3-python-template.vercel.app%2F&demo-image=https://assets.vercel.com/image/upload/v1669994156/random/flask.png)
+# Aagaaz
 
-# Flask + Vercel
+**Aagaaz** is an engaging platform created by **Rishabh Sahil** to fuel your passion for math and puzzles! Enjoy challenging Sudoku puzzles and brain-teasing Mathemania quizzes, designed for all skill levels. Built with Flask, Python, and a modern, responsive UI, Aagaaz is perfect for sharpening your mind while having fun.
 
-This example shows how to use Flask 3 on Vercel with Serverless Functions using the [Python Runtime](https://vercel.com/docs/concepts/functions/serverless-functions/runtimes/python).
+## About Aagaaz
 
-## Demo
+Aagaaz, developed by Rishabh Sahil, is a web application featuring two core games: a **Sudoku Solver & Checker** and **Mathemania Quizzes**. With a sleek dark-mode interface, it offers an interactive experience for puzzle enthusiasts and math lovers, powered by Flask and Python.
 
-https://flask-python-template.vercel.app/
+## Features
 
-## How it Works
+- **Sudoku Solver & Checker**: Generate puzzles (Easy, Medium, Hard), solve them instantly, or check your answers with real-time feedback.
+- **Mathemania Quizzes**: Test your skills with 10-question sets in arithmetic, algebra, geometry, logic, and reasoning.
+- **Progress Tracking**: View your game history and stats for both Sudoku and Mathemania.
+- **Responsive Design**: Seamless, animated UI for mobile and desktop devices.
+- **Open Source**: Licensed under the [MIT License](LICENSE), welcoming contributions.
 
-This example uses the Web Server Gateway Interface (WSGI) with Flask to enable handling requests on Vercel with Serverless Functions.
+## Installation
 
-## Running Locally
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/axinyyyx/aagaaz.git
+   cd aagaaz
+   ```
 
-```bash
-npm i -g vercel
-vercel dev
-```
+2. **Set Up a Virtual Environment**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-Your Flask application is now available at `http://localhost:3000`.
+3. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## One-Click Deploy
+4. **Run the Application**:
+   ```bash
+   python index.py
+   ```
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples):
+5. Open `http://localhost:5000` in your browser to start playing!
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fpython%2Fflask3&demo-title=Flask%203%20%2B%20Vercel&demo-description=Use%20Flask%203%20on%20Vercel%20with%20Serverless%20Functions%20using%20the%20Python%20Runtime.&demo-url=https%3A%2F%2Fflask3-python-template.vercel.app%2F&demo-image=https://assets.vercel.com/image/upload/v1669994156/random/flask.png)
+## Requirements
+
+- Python 3.8+
+- Flask
+- Dependencies listed in `requirements.txt`
+
+## Deployment
+
+To deploy Aagaaz on Vercel:
+1. Push your repository to GitHub.
+2. Create a `vercel.json` file in the root directory:
+   ```json
+   {
+       "version": 2,
+       "builds": [
+           {
+               "src": "index.py",
+               "use": "@vercel/python"
+           }
+       ],
+       "routes": [
+           {
+               "src": "/(.*)",
+               "dest": "index.py"
+           }
+       ]
+   }
+   ```
+3. Deploy using the Vercel CLI or GitHub integration:
+   ```bash
+   vercel
+   ```
+
+## About the Developer
+
+I'm **Rishabh Sahil**, a passionate coder and puzzle enthusiast from India. Aagaaz is my creation to share my love for math and logic with the world. When I'm not coding, I'm exploring new tech or crafting brain teasers. Connect with me:
+
+- [GitHub](https://github.com/axinyyyx)
+- [Instagram](https://www.instagram.com/rishabhsahill)
+- [Facebook](https://www.facebook.com/rishabhsahill)
+- [X](https://x.com/rishabhsahill)
+
+## Contributing
+
+Contributions are welcome! Fork the repository, submit issues, or create pull requests to enhance Aagaaz.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+Built with 💻 by Rishabh Sahil
