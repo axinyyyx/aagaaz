@@ -15,8 +15,8 @@
     <meta name="og:image" content="https://aagaaz-3.vercel.app/static/images/logo.png">
     <title>{% block title %}Aagaaz{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://aagaaz-3.vercel.app/static/images/logo.png">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="shortcut icon" href="https://aagaaz-3.vercel.app/static/images/logo.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body class="min-h-screen flex flex-col bg-gray-900 text-gray-100">
